@@ -3,7 +3,6 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    byebug
       if params[:id].present?
         @users = User.where(
           "first_name ILIKE ? or last_name ILIKE ? or email ILIKE ?",
