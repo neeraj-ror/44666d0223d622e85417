@@ -3,14 +3,26 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.all
+    byebug
+      if params[:id].present?
+        @users = User.where(
+          "first_name ILIKE ? or last_name ILIKE ? or email ILIKE ?",
+          "%#{params[:id]}%", "%#{params[:id]}%", "%#{params[:id]}%").distinct
+      else
+        @users = User.all
+      end
 
     render json: @users
   end
 
   # GET /users/1
   def show
-    render json: @user
+    unless @user.nil?
+      render json: @user
+    else
+      render :action => :index, :id => params[:id]
+    end  
+    
   end
 
   # POST /users
@@ -41,8 +53,8 @@ class UsersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params[:id])
-    end
+      @user = User.where(id: params[:id]).last
+    end 
 
     # Only allow a list of trusted parameters through.
     def user_params
